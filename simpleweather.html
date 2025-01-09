@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>SimpleWeather</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .weather-info {
+            text-align: center;
+        }
+
+        .current-weather img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SimpleWeather</h1>
+        </header>
+        <main>
+            <div class="weather-info">
+                <div class="location">
+                    <h2 id="cityName">Şehir Adı</h2>
+                    <p id="date">Tarih ve Saat</p>
+                </div>
+                <div class="current-weather">
+                    <p id="temperature">0°C</p>
+                </div>
+                <div class="details">
+                    <p>Nem: <span id="humidity">0%</span></p>
+                    <p>Rüzgar Hızı: <span id="windSpeed">0 km/h</span></p>
+                    <p>Görüş Mesafesi: <span id="visibility">0 km</span></p>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <p>© 2025 SimpleWeather. Tüm Hakları Saklıdır.</p>
+        </footer>
+    </div>
+    <script>
+        async function getWeather(lat, lon) {
+            const apiKey = '2ck1gqcuaDOdocuak60ojjaw2aBoBQ-HENiQL2t3Q4ffdFt7xG'; // Buraya kendi API anahtarınızı ekleyin
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=tr&appid=${apiKey}`;
+
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+
+            if (data.cod === 200) {
+                document.getElementById('cityName').innerText = data.name;
+                document.getElementById('date').innerText = new Date().toLocaleString();
+                document.getElementById('temperature').innerText = `${data.main.temp}°C`;
+                document.getElementById('humidity').innerText = `${data.main.humidity}%`;
+                document.getElementById('windSpeed').innerText = `${data.wind.speed} km/h`;
+                document.getElementById('visibility').innerText = `${data.visibility / 1000} km`;
+            } else {
+                alert('Hava durumu bilgisi alınamadı. Lütfen tekrar deneyin.');
+            }
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    getWeather(lat, lon);
+                }, () => {
+                    alert('Konum bilgisi alınamadı.');
+                });
+            } else {
+                alert('Tarayıcınız konum bilgisi desteği vermiyor.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', getLocation);
+    </script>
+</body>
+</html>
